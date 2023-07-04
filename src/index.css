@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#md_textContainer::-webkit-scrollbar {
+  width: 4px;
+}
+ 
+#md_textContainer::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+ 
+#md_textContainer::-webkit-scrollbar-thumb {
+  background-color: #1d214431;
+  outline: 1px solid #1D214431;
+}
+
+/* The animation code */
+@keyframes example {
+  from {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+  to {
+    right: 2.5rem;
+    bottom: 2.5rem;
+  }
+}
+
+/* The element to apply the animation to */
+#windowMaildub {
+  animation-name: example;
+  animation-duration: 0.3s;
+}
