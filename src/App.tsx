@@ -57,6 +57,7 @@ function App() {
   const [loadingSummary, setLoadingSummary] = useState<boolean>(true);
 
   const copyTextRef = useRef<HTMLButtonElement | null>(null);
+  const shareRef = useRef<HTMLButtonElement | null>(null);
   const regenerateTextRef = useRef<HTMLButtonElement | null>(null);
 
   const identifyMailOpen = (windowUrl: string) => {
@@ -268,6 +269,21 @@ function App() {
     summarizeText(selectedSocial);
   }
 
+  const handleShareClick = (e: any) => {
+    let url = '';
+    if (selectedSocial === 'twitter') {
+      url = 'https://twitter.com'
+    } else if (selectedSocial === 'instagram') {
+      url = 'https://instagram.com'
+    } else if (selectedSocial === 'facebook') {
+      url = 'https://facebook.com'
+    } else if (selectedSocial === 'linkedin') {
+      url = 'https://linkedin.com'
+    }
+
+    window.open(url, '_blank', 'noopener noreferrer');
+  }
+
   const handleNextImageClick = (e: any) => {
     // console.log('next button clicked');
     if (imageIndex < (emailImages.length -1)) imageIndex += 1;
@@ -331,11 +347,13 @@ function App() {
       textContainerRef.current?.addEventListener('click', handleTextContainerClick);
       copyTextRef.current?.addEventListener('click', handleCopyTextClick);
       regenerateTextRef.current?.addEventListener('click', handleRegenerateText);
+      shareRef.current?.addEventListener('click', handleShareClick);
     }
 
     return () => {
       textContainerRef.current?.removeEventListener('click', handleTextContainerClick);
       copyTextRef.current?.removeEventListener('click', handleCopyTextClick);
+      shareRef.current?.removeEventListener('click', handleShareClick);
       regenerateTextRef.current?.removeEventListener('click', handleRegenerateText);
     }
   }, [loadingSummary]);
@@ -354,64 +372,69 @@ function App() {
 
   const openWindow = () => (
     <div id="windowMaildub" ref={windowRef} className="h-[550px] z-[1000000000] w-[500px] p-4 bg-white shadow-lg shadow-black border-gray border-2 absolute bottom-10 right-10 rounded-lg">
-      <div className="flex">
-        <img src={currentImage || "https://image.lexica.art/full_jpg/e75035e1-a48a-4cf0-8c6a-cfdf4a204857"} className="max-w-[150px] w-full max-h-[150px] h-full" />
-        <div className="flex flex-1 flex-col items-center">
-          <div className="text-3xl font-bold text-primary">MailDub.Club</div>
-          <button ref={changeImageRedoneC} className="mt-6 h-8 text-dark rounded-full flex justify-center items-center text-md w-48 bg-white border-black border-2 px-4 py-1">
-            {isGeneratingImage ?
-              <ThreeDots 
-              height="10" 
-              width="40" 
-              radius="9"
-              color="#4fa94d" 
-              ariaLabel="three-dots-loading"
+      <div className="relative flex flex-col">
+        <div className="flex ">
+          <img src={currentImage || "https://image.lexica.art/full_jpg/e75035e1-a48a-4cf0-8c6a-cfdf4a204857"} className="max-w-[150px] w-full max-h-[150px] h-full" />
+          <div className="flex flex-1 flex-col items-center">
+            <div className="text-3xl font-bold text-primary">
+              <a href="https://maildub.club/manage" target="blank" className="text-primary">MailDub.Club</a>
+              
+            </div>
+            <button ref={changeImageRedoneC} className="mt-6 h-8 text-dark rounded-full flex justify-center items-center text-md w-48 bg-white border-black border-2 px-4 py-1">
+              {isGeneratingImage ?
+                <ThreeDots 
+                height="10" 
+                width="40" 
+                radius="9"
+                color="#4fa94d" 
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                visible={true}
+                /> :
+                'Generate Image'}
+            </button>
+            <div className="flex items-center mt-4">
+              <button ref={prevImageRef} className={`${emailImageIndex === 0 ? 'text-gray' : 'text-primary hover:text-primary/80'} rounded-full text-lg mr-4`}><BsFillArrowLeftSquareFill /></button>
+              <button ref={downloadImageRef} className=" text-white rounded-full text-md h-8 w-48 bg-primary hover:bg-primary/80 border-primary px-4 py-1">Download Image</button>
+              <button ref={nextImageRef} className={` ${emailImageIndex === (emailImagesCopy.length - 1) ? 'text-gray' : 'text-primary hover:text-primary/80'} rounded-full text-lg ml-4`}><BsFillArrowRightSquareFill /></button>
+            </div>
+          </div>
+        </div>
+        <div className="flex mt-4">
+          <button ref={twitterRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray  px-2 py-1 mr-4 ${socialButtonSelected('twitter') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Twitter</button>
+          <button ref={instagramRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('instagram') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Instagram</button>
+          <button ref={facebookRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('facebook') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Facebook</button>
+          <button ref={linkedinRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('linkedin') ? 'bg-primary text-white' : 'bg-gray-300'}`}>LinkedIn</button>
+        </div>
+        {!loadingSummary ? (
+          <div className="border-2 border-gray-300 h-64 mt-4">
+            <div ref={textContainerRef} id="md_textContainer" className="whitespace-pre-wrap overflow-y-scroll p-3 cursor-text h-64 pb-8">
+              {summaryText}
+            </div>
+            <div className="flex flex-1 items-end justify-end mt-2">
+              <button ref={regenerateTextRef} className="text-dark rounded-full text-md w-32 mr-4 bg-white px-4 h-7 shadow-sm shadow-gray hover:shadow-lg hover:shadow-gray">Regenerate</button>
+              <button ref={shareRef} className="text-white rounded-full text-md w-24 bg-primary border-primary px-4 shadow-sm h-7  shadow-gray hover:bg-primary/80 mr-4">Share</button>
+              <button ref={copyTextRef} className="text-white rounded-full text-md w-32 bg-primary border-primary px-4 shadow-sm h-7  shadow-gray hover:bg-primary/80">Copy Text</button>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full h-72 flex items-center justify-center">
+            
+            <ThreeCircles
+              height="100"
+              width="100"
+              color="#4fa94d"
               wrapperStyle={{}}
+              wrapperClass=""
               visible={true}
-               /> :
-              'Generate Image'}
-          </button>
-          <div className="flex items-center mt-4">
-            <button ref={prevImageRef} className={`${emailImageIndex === 0 ? 'text-gray' : 'text-primary hover:text-primary/80'} rounded-full text-lg mr-4`}><BsFillArrowLeftSquareFill /></button>
-            <button ref={downloadImageRef} className=" text-white rounded-full text-md h-8 w-48 bg-primary hover:bg-primary/80 border-primary px-4 py-1">Download Image</button>
-            <button ref={nextImageRef} className={` ${emailImageIndex === (emailImagesCopy.length - 1) ? 'text-gray' : 'text-primary hover:text-primary/80'} rounded-full text-lg ml-4`}><BsFillArrowRightSquareFill /></button>
+              ariaLabel="three-circles-rotating"
+              outerCircleColor=""
+              innerCircleColor=""
+              middleCircleColor=""
+            />
           </div>
-        </div>
+        )}
       </div>
-      <div className="flex mt-4">
-        <button ref={twitterRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray  px-2 py-1 mr-4 ${socialButtonSelected('twitter') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Twitter</button>
-        <button ref={instagramRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('instagram') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Instagram</button>
-        <button ref={facebookRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('facebook') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Facebook</button>
-        <button ref={linkedinRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('linkedin') ? 'bg-primary text-white' : 'bg-gray-300'}`}>LinkedIn</button>
-      </div>
-      {!loadingSummary ? (
-        <div className="border-2 border-gray-300 h-64 mt-4">
-          <div ref={textContainerRef} id="md_textContainer" className="whitespace-pre-wrap overflow-y-scroll p-3 cursor-text h-64 pb-8">
-            {summaryText}
-          </div>
-          <div className="h-8 flex justify-end">
-            <button ref={regenerateTextRef} className="text-dark rounded-full text-md w-48 mr-4 bg-white border-black border-2 px-4 py-1">Regenerate</button>
-            <button ref={copyTextRef} className="text-white rounded-full text-md w-48 bg-primary border-primary px-4 py-1 hover:bg-primary/80">Copy Text</button>
-          </div>
-        </div>
-      ) : (
-        <div className="w-full h-72 flex items-center justify-center">
-          
-          <ThreeCircles
-            height="100"
-            width="100"
-            color="#4fa94d"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-            ariaLabel="three-circles-rotating"
-            outerCircleColor=""
-            innerCircleColor=""
-            middleCircleColor=""
-          />
-        </div>
-      )}
-      
     </div>
   );
 
