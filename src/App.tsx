@@ -29,7 +29,7 @@ function App() {
 
   const [loaded, setLoaded] = useState<boolean>(false);
 
-  const [selectedSocial, setSelectedSocial] = useState('twitter');
+  const [selectedSocial, setSelectedSocial] = useState('facebook');
   const [isMailOpen, setIsMailOpen] = useState(false);
 
   const windowRef = useRef<HTMLDivElement | null>(null);
@@ -313,7 +313,7 @@ function App() {
   useEffect(() => {
     if (windowRef.current) {
       // console.log('attaching listeners')
-      if(!summaryText) summarizeText('twitter');
+      if(!summaryText) summarizeText(selectedSocial || 'facebook');
       windowRef.current.addEventListener('click', handleWindowClick);
       changeImageRedoneC.current?.addEventListener('click', handleGenerateImageClick);
       downloadImageRef.current?.addEventListener('click', handleDownloadImageClick);
@@ -401,9 +401,9 @@ function App() {
           </div>
         </div>
         <div className="flex mt-4">
-          <button ref={twitterRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray  px-2 py-1 mr-4 ${socialButtonSelected('twitter') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Twitter</button>
-          <button ref={instagramRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('instagram') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Instagram</button>
           <button ref={facebookRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('facebook') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Facebook</button>
+          <button ref={instagramRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('instagram') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Instagram</button>
+          <button ref={twitterRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray  px-2 py-1 mr-4 ${socialButtonSelected('twitter') ? 'bg-primary text-white' : 'bg-gray-300'}`}>Twitter</button>
           <button ref={linkedinRef} className={`text-sm rounded-full w-24 hover:shadow-md hover:shadow-gray bg-gray-300 px-2 py-1 mr-4 ${socialButtonSelected('linkedin') ? 'bg-primary text-white' : 'bg-gray-300'}`}>LinkedIn</button>
         </div>
         {!loadingSummary ? (
@@ -412,7 +412,7 @@ function App() {
               {summaryText}
             </div>
             <div className="flex flex-1 items-end justify-end mt-2">
-              <button ref={regenerateTextRef} className="text-dark rounded-full text-md w-32 mr-4 bg-white px-4 h-7 shadow-sm shadow-gray hover:shadow-lg hover:shadow-gray">Regenerate</button>
+              <button ref={regenerateTextRef} className="text-dark rounded-full text-md w-40 border-2 border-gray mr-4 bg-white px-4 h-7 shadow-sm shadow-gray hover:shadow-lg hover:shadow-gray">Regenerate</button>
               <button ref={shareRef} className="text-white rounded-full text-md w-24 bg-primary border-primary px-4 shadow-sm h-7  shadow-gray hover:bg-primary/80 mr-4">Share</button>
               <button ref={copyTextRef} className="text-white rounded-full text-md w-32 bg-primary border-primary px-4 shadow-sm h-7  shadow-gray hover:bg-primary/80">Copy Text</button>
             </div>
